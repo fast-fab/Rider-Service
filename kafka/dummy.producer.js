@@ -1,6 +1,6 @@
 const { DummykafkaConfig } = require('../config/kafka.config')
 const {Kafka} = require('kafkajs')
-const counter = 0;
+let counter = 0;
 class dummyProducer {
     constructor() {
         this.kafka = new Kafka({
@@ -52,7 +52,7 @@ class dummyProducer {
     }) {
         await this.connect()
         counter++; //incerment counter for key
-        const message = {
+        var message = {
             order_id,
             order_date,
             pickup_location,
@@ -79,6 +79,8 @@ class dummyProducer {
             longitude,
             latitude
         }
+        console.log(message)
+        console.log("here")
         const req = await this.producer.send({
             topic: DummykafkaConfig.topics.acceptedOrder,
             messages: [{
