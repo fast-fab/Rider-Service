@@ -1,47 +1,36 @@
-const { Kafka } = require('kafkajs');
-const { kafkaConfig } = require('../../config/kafka.config');
+const {Kafka}=require('kafkajs')
+const {kafkaConfig}=require('../config/kafka.config')
 
-class OrderAcceptingService {
-
-    constructor() {
-        this.kafka = new Kafka({
-            clientId: kafkaConfig.clientId,
-            brokers: kafkaConfig.brokers
-        });
-        this.consumer = this.kafka.consumer({groupId:'rider-service'});
+class ConsumingRiderClass{
+    constructor(){
+      this.kafka=new Kafka({
+        clientId:kafkaConfig.clientId,
+        brokers:kafkaConfig.brokers,
+        topics:kafkaConfig.topics.acceptedOrder
+      })
+      this.consumer=this.kafka.consumer({groupId:'lol'})
     }
 
-    
-  async connect() {
-    try {
-      await this.consumer.connect();
-      console.log('Consumer connected successfully');
-
+    async consumer(){
+      await this.consumer.connect()
       await this.consumer.subscribe({
-        topics: [,
-          kafkaConfig.topics.acceptedOrder
-        ],
-        fromBeginning: true
-      });
-    } catch (error) {
-      console.error('Consumer connection failed:', error);
-      throw error;
+        topics:[kafkaConfig.topics.acceptedOrder],
+        fromBeginning:true
+      })
+
+      await this.consumer.run({
+        eachMessage:async({topics,message})=>{
+          console.log({
+            topics:topics.toString(),
+            key:message.key.toString(),
+            value:message.value.toString()
+          })
+        }
+      })
     }
   }
 
-    async subscribe() {
-        await this.connect()
-        await consumer.subscribe({ topic: 'test-topic', fromBeginning: true })
-        await consumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
-                console.log("topic is:",topic,{
-                    value: message.value.toString(),
-                })
-            },
-        })
-    }
-}
 
-module.exports = {
-    OrderAcceptingService
+module.exports={
+  ConsumingRiderClass
 }
