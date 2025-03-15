@@ -1,10 +1,12 @@
-const {ConsumingRiderClass}=require("../kafka/consume.kafka")
-const consume=new ConsumingRiderClass()
+const { ConsumingRiderClass } = require("../kafka/consume.kafka");
+const consume = new ConsumingRiderClass();
 
-async function consumingMessages(){
-    let count=0;
-    const a=await consume.consumerfunction()
-    console.log("count:",count,typeof a)
+async function consumingMessages() {
+    try {
+        const message = await consume.consumerfunction();
+    }catch(e){
+        console.log("error:",e)
+    }
 }
 
-consumingMessages()
+consumingMessages();
