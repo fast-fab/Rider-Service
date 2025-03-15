@@ -1,8 +1,9 @@
-const { dummyProducer } = require('../kafka/dummy.producer'); // Adjust path if needed
+const {dummyProducer}=require('../kafka/dummy.producer')
 
-(async () => {
+// IIFE to send a test message
+async function lol (){
     const producer = new dummyProducer();
-    
+
     const orderData = {
         order_id: "12345",
         order_date: new Date().toISOString(),
@@ -35,9 +36,10 @@ const { dummyProducer } = require('../kafka/dummy.producer'); // Adjust path if 
     };
 
     try {
-        await producer.produceMessages(orderData);
-        console.log("Message produced successfully");
+        const response = await producer.produceMessages(orderData);
+        console.log("Message produced successfully:", response);
     } catch (error) {
         console.error("Error producing message:", error);
     }
-})();
+}
+lol();

@@ -1,19 +1,11 @@
-// yeh queue se uthayega aur phir order place krega
-// batch request
-const amqp = require('amqplib');
+const {ConsumingRiderClass}=require("../kafka/consume.kafka")
+const consume=new ConsumingRiderClass()
 
-async function consumeMessage() {
-  const connection = await amqp.connect('amqp://localhost');
-  const channel = await connection.createChannel();
-  const queue = 'hello';
-
-  await channel.assertQueue(queue);
-  console.log('Waiting for messages...');
-
-  channel.consume(queue, (message) => {
-    const content = message.content.toString();
-    console.log(`Received: ${content}`);
-  }, { noAck: true });
+async function consumingMessages(){
+    let count=0;
+    const a=await consume.consumerfunction()
+    console.log("count:",count,typeof a)
+    console.log("count:",count,JSON.parse(a))
 }
 
-consumeMessage();
+consumingMessages()

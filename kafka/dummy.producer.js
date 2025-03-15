@@ -1,5 +1,6 @@
-const { DummykafkaConfig } = require('../config/kafka.config')
-const {Kafka} = require('kafkajs')
+const { DummykafkaConfig } = require('../config/kafka.config');
+const { Kafka } = require('kafkajs');
+
 let counter = 0;
 class dummyProducer {
     constructor() {
@@ -9,7 +10,9 @@ class dummyProducer {
         });
 
         this.producer = this.kafka.producer();
+        this.isConnected = false; // Initialize isConnected flag
     }
+
     async connect() {
         try {
             if (!this.isConnected) {
@@ -23,73 +26,29 @@ class dummyProducer {
         }
     }
 
-    async produceMessages({
-        order_id,
-        order_date,
-        pickup_location,
-        billing_customer_name,
-        billing_last_name,
-        billing_address,
-        billing_address_2,
-        billing_city,
-        billing_pincode,
-        billing_state,
-        billing_country,
-        billing_email,
-        billing_phone,
-        shipping_is_billing,
-        order_items,
-        payment_method,
-        length,
-        breadth,
-        height,
-        weight,
-        sub_total,
-        collect_shipping_fees,
-        shipping_method,
-        longitude,
-        latitude
-    }) {
-        await this.connect()
-        counter++; //incerment counter for key
-        var message = {
-            order_id,
-            order_date,
-            pickup_location,
-            billing_customer_name,
-            billing_last_name,
-            billing_address,
-            billing_address_2,
-            billing_city,
-            billing_pincode,
-            billing_state,
-            billing_country,
-            billing_email,
-            billing_phone,
-            shipping_is_billing,
-            order_items,
-            payment_method,
-            length,
-            breadth,
-            height,
-            weight,
-            sub_total,
-            collect_shipping_fees,
-            shipping_method,
-            longitude,
-            latitude
+    async produceMessages(orderData) {
+        try {
+            await this.connect();
+            counter++; // Increment counter for key
+            
+            const message = JSON.stringify(orderData);
+
+            const req1 = await this.producer.send({
+                topic: DummykafkaConfig.topics.acceptedOrder,
+                messages: [{ 
+                    key: String(counter), 
+                    value: message, 
+                    partition: 0 
+                }]
+            });
+
+            console.log("Message sent:", req1);
+            return req1;
+        } catch (error) {
+            console.error("Error producing message:", error);
+            throw error;
         }
-        console.log(message)
-        console.log("here")
-        const req = await this.producer.send({
-            topic: DummykafkaConfig.topics.acceptedOrder,
-            messages: [{
-                key: counter, value: JSON.stringify(message), partition: 0
-            }]
-        })
-        console.log(req)
     }
 }
-module.exports = {
-    dummyProducer
-}
+
+module.exports = {dummyProducer} ;
