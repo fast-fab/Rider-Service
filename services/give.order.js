@@ -1,6 +1,4 @@
-const express = require("express");
 const axios = require("axios");
-const app = express();
 
 class PlacingOrder {
     // Function to create an order
@@ -11,7 +9,6 @@ class PlacingOrder {
         billing_customer_name,
         billing_last_name,
         billing_address,
-        billing_address_2,
         billing_city,
         billing_pincode,
         billing_state,

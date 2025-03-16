@@ -6,6 +6,7 @@ async function consumingMessages() {
         const message = await consume.consumerfunction();
     }catch(e){
         console.log("error:",e)
+        return "error consuming"
     }
 }
 
